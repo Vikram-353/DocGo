@@ -9,7 +9,8 @@ import {
   Contact,
   MyAppointment,
   MyProfile,
-  Navbar} from './utility'
+  Navbar,
+  Footer} from './utility'
 
 const App = () => {
   return (
@@ -26,7 +27,9 @@ const App = () => {
         <Route path='/my-appointments' element={<MyAppointment/>}/>
         <Route path='/appointments/:docId' element={<Appointment/>}/>
         
+        
     </Routes>
+    <Footer/>
 </div>
   )
 }

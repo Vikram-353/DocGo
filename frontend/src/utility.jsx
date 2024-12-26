@@ -9,6 +9,10 @@ import MyAppointment from './pages/MyAppointment';
 import MyProfile from './pages/MyProfile';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
+import SpecialityMenu from './components/SpecialityMenu';
+import TopDoctors from './components/TopDoctors';
+import Banner from './components/Banner';
+import Footer from './components/Footer';
 
 export {
   Doctors,
@@ -19,5 +23,9 @@ export {
   MyAppointment,
   MyProfile,
   Navbar,
-  Header
+  Header,
+  SpecialityMenu,
+  TopDoctors,
+  Banner,
+  Footer
 };

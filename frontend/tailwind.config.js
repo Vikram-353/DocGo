@@ -6,6 +6,9 @@ export default {
       colors: {
         primary: "#34a1eb",
       },
+      gridTemplateColumns: {
+        auto: "repeat(auto-fill,minmax(230px,1fr))",
+      },
     },
   },
   plugins: [],

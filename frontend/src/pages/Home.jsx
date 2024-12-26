@@ -1,5 +1,5 @@
 import React from 'react'
-import { Header } from '../utility'
+import { Header ,SpecialityMenu,TopDoctors,Banner} from '../utility'
 
 
 function Home() {
@@ -7,6 +7,10 @@ function Home() {
 
     <div>
       <Header/>
+      <SpecialityMenu/>
+      <TopDoctors/>
+      <Banner/>
+      
     </div>
 
   )
