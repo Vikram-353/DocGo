@@ -1,9 +1,52 @@
-import React from 'react'
+import React from "react";
+import { AppContext } from "../context/context";
+
+import { useContext } from "react";
 
 function MyAppointment() {
+  const { doctors } = useContext(AppContext);
+
   return (
-    <div>MyAppointment</div>
-  )
+    <div>
+      <p className="pb-1 mt-12 font-medium text-zinc-700 border-b ">
+        My Appointment
+      </p>
+      <div>
+        {doctors.slice(0, 3).map((item, index) => (
+          <div
+            className="grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
+            key={index}
+          >
+            <div>
+              <img className="w-32 bg-indigo-50" src={item.image} alt="" />
+            </div>
+            <div className="flex-1 text-sm text-zinc-600">
+              <p className="text-neutral-800 font-semibold">{item.name}</p>
+              <p>{item.speciality}</p>
+              <p className="text-zinc-700 font-medium mt-1">Address:</p>
+              <p className="text-xs">{item.address.line1}</p>
+              <p className="text-xs">{item.address.line2}</p>
+              <p className="text-xm mt-1">
+                Date And Time :{" "}
+                <span className="text-sm text-neutral-700 font-medium">
+                  25,July,2024 | 8:30 PM
+                </span>
+              </p>
+            </div>
+            <div></div>
+            <div className="flex flex-col gap-2 justify-end">
+              <button className="text-sm hover:bg-primary hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
+                Cancle Appointment
+              </button>
+              <button className="text-sm hover:bg-red-500 hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
+                Pay Online
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-export default MyAppointment
+export default MyAppointment;
