@@ -14,13 +14,14 @@ const addDoctor = async (req, res) => {
       experience,
       about,
       fees,
+      degree,
       address,
       image,
     } = req.body;
 
     const imageFile = req.file;
 
-    //checking for all data to add doctor
+    // Checking for all data to add doctor
     if (
       !name ||
       !email ||
@@ -30,6 +31,7 @@ const addDoctor = async (req, res) => {
       !experience ||
       !about ||
       !fees ||
+      !degree ||
       !address ||
       !imageFile
     ) {
@@ -38,35 +40,33 @@ const addDoctor = async (req, res) => {
         .json({ success: false, message: "Please fill all the fields" });
     }
 
-    //validating emailf ormate
+    // Validating email format
     if (!validator.isEmail(email)) {
       return res
         .status(400)
-        .json({ success: false, message: "Please enter valid email" });
+        .json({ success: false, message: "Please enter a valid email" });
     }
 
-    //validate apssword
+    // Validate password
     if (password.length < 8) {
       return res
         .status(400)
         .json({ success: false, message: "Password must be 8 characters" });
     }
 
-    //encrypting password
-
+    // Encrypting password
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
 
-    //upload image to cloudinary
+    // Upload image to Cloudinary
     const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
-      resourse_type,
+      resource_type: "image",
     });
     const imageURL = imageUpload.secure_url;
 
     const docData = {
       name,
       email,
-      image: imageURL,
       password: hashedpassword,
       phone,
       speciality,
@@ -74,8 +74,8 @@ const addDoctor = async (req, res) => {
       about,
       fees,
       address: JSON.parse(address),
-      date: Date.now(),
       degree,
+      image: imageURL,
     };
 
     const newDoctor = new doctorModel(docData);
@@ -84,7 +84,6 @@ const addDoctor = async (req, res) => {
     res.status(200).json({ success: true, message: "Doctor Added" });
   } catch (error) {
     console.log(error);
-
     res.status(500).json({ error: error.message });
   }
 };
