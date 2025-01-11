@@ -11,7 +11,8 @@ function Navbar() {
   const logout = () => {
     if (atoken) {
       setAtoken("");
-      localStorage.removeItem("aToken");
+      localStorage.removeItem("atoken");
+      // navigate("/login");
     }
   };
 

@@ -111,11 +111,11 @@ function Login() {
   const [password, setPassword] = useState("");
   const { setAtoken, backendUrl } = useContext(AdminContext);
   const [state, setState] = useState("Admin");
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [loading, setLoading] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const endpoint =
         state === "Admin"
@@ -130,7 +130,7 @@ function Login() {
           localStorage.setItem("atoken", data.token);
           setAtoken(data.token);
         } else {
-          console.log(data.token); // Handle doctor token logic here
+          console.log(data.token);
         }
       } else {
         toast.error(data.message || "Login failed. Please try again.");
@@ -141,8 +141,6 @@ function Login() {
         error.response?.data?.message || error.message
       );
       toast.error(error.response?.data?.message || "An error occurred.");
-    } finally {
-      setLoading(false); // Stop loading
     }
   };
 

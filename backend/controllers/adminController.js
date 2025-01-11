@@ -192,8 +192,9 @@ const addDoctor = async (req, res) => {
     const docData = {
       name,
       email,
-      password: hashedPassword,
       phone,
+      password: hashedPassword,
+
       speciality,
       experience,
       about,
@@ -214,6 +215,31 @@ const addDoctor = async (req, res) => {
 };
 
 // Admin Login API
+
+// import jwt from "jsonwebtoken";
+
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (
+//       email === process.env.ADMIN_EMAIL &&
+//       password === process.env.ADMIN_PASSWORD
+//     ) {
+//       const token = jwt.sign(
+//         { email, role: "Admin" }, // Payload
+//         process.env.JWT_SECRET
+//       );
+//       res.json({ success: true, token });
+//     } else {
+//       res.status(400).json({ success: false, message: "Invalid Credentials" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
 const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -222,9 +248,7 @@ const loginAdmin = async (req, res) => {
       email === process.env.ADMIN_EMAIL &&
       password === process.env.ADMIN_PASSWORD
     ) {
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(email + password, process.env.JWT_SECRET);
       res.json({ success: true, token });
     } else {
       res.status(400).json({ success: false, message: "Invalid Credentials" });
@@ -235,4 +259,45 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (
+//       email === process.env.ADMIN_EMAIL &&
+//       password === process.env.ADMIN_PASSWORD
+//     ) {
+//       const token = jwt.sign(
+//         { email, role: "Admin" }, // Proper payload
+//         process.env.JWT_SECRET,
+//         { expiresIn: "1h" } // Token expires in 1 hour
+//       );
+//       res.json({ success: true, token });
+//     } else {
+//       res.status(400).json({ success: false, message: "Invalid Credentials" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
 export { addDoctor, loginAdmin };
+
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     if (
+//       email === process.env.ADMIN_EMAIL &&
+//       password === process.env.ADMIN_PASSWORD
+//     ) {
+//       const token = jwt.sign(email + password, process.env.JWT_SECRET);
+//       res.json({ success: true, token });
+//     } else {
+//       res.status(400).json({ success: false, message: "Invalid Credentials" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
