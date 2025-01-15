@@ -60,10 +60,24 @@ function AddDoctor() {
 
       if (data.success) {
         toast.success(data.message);
+        setDocImg(false);
+        setDocName("");
+        setDocEmail("");
+        setDocPassword("");
+        // setDocPhone("");
+        setDocExperience("");
+        setDocFees("");
+        setDocAbout("");
+        setDocSpeciality("");
+        setDegree("");
+        setAddress1("");
+        setAddress2("");
       } else {
         toast.error(data.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   return (
