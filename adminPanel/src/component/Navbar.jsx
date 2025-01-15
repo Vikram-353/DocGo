@@ -9,11 +9,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   const logout = () => {
-    if (atoken) {
-      setAtoken("");
-      localStorage.removeItem("atoken");
-      // navigate("/login");
-    }
+    atoken && setAtoken("");
+    atoken && localStorage.removeItem("atoken");
   };
 
   return (

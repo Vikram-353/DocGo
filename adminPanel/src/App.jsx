@@ -10,7 +10,7 @@ import AllAppointments from "./pages/Admin/AllAppointments";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import DoctorList from "./pages/Admin/DoctorList";
 function App() {
-  const { atoken } = useContext(AdminContext) || {};
+  const { atoken } = useContext(AdminContext);
 
   return atoken ? (
     <div className="bg-[#F8F9FD)]">

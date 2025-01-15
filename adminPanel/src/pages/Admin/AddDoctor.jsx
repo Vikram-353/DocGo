@@ -6,17 +6,17 @@ import axios from "axios";
 
 function AddDoctor() {
   const [docImg, setDocImg] = useState(false);
-  const [docName, setDocName] = useState("");
-  const [docEmail, setDocEmail] = useState("");
-  const [docPassword, setDocPassword] = useState("");
-  const [phone, setDocPhone] = useState(0);
-  const [docExperience, setDocExperience] = useState("1 Year");
-  const [docFees, setDocFees] = useState("");
-  const [docSpeciality, setDocSpeciality] = useState("General physician");
+  const [name, setDocName] = useState("");
+  const [email, setDocEmail] = useState("");
+  const [password, setDocPassword] = useState("");
+  // const [phone, setDocPhone] = useState("");
+  const [experience, setDocExperience] = useState("1 Year");
+  const [fees, setDocFees] = useState("");
+  const [about, setDocAbout] = useState("");
+  const [speciality, setDocSpeciality] = useState("General physician");
   const [degree, setDegree] = useState("");
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
-  const [docAbout, setDocAbout] = useState("");
   const { backendUrl, atoken } = useContext(AdminContext);
 
   const onSubmitHandler = async (e) => {
@@ -26,101 +26,48 @@ function AddDoctor() {
       if (!docImg) {
         return toast.error("Please upload doctor image");
       }
-
-      // const currentDate = new Date().toISOString().split("T")[0];
-
       const formData = new FormData();
-      formData.append("name", docName);
-      formData.append("email", docEmail);
-      formData.append("phone", phone);
-      formData.append("password", docPassword);
-      formData.append("speciality", docSpeciality);
-      formData.append("experience", docExperience);
-      formData.append("about", docAbout);
-      formData.append("fees", Number(docFees));
+      formData.append("image", docImg);
+      formData.append("name", name);
+      formData.append("email", email);
+
+      // formData.append("phone", Number(phone));
+      formData.append("password", password);
+      formData.append("experience", experience);
+      formData.append("fees", Number(fees));
+      formData.append("about", about);
+      formData.append("speciality", speciality);
       formData.append("degree", degree);
+
       formData.append(
         "address",
-        JSON.stringify({ line1: address1.trim(), line2: address2.trim() })
+        JSON.stringify({ line1: address1, line2: address2 })
       );
 
-      formData.append("image", docImg);
-      // formData.append("date", currentDate); // Append the current date
-      console.log(atoken);
+      // console.log(atoken);
 
       formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
+        console.log(`${key} ${value}`);
       });
 
       const { data } = await axios.post(
         `${backendUrl}/api/admin/addDoctor`,
         formData,
-        { headers: { atoken } }
+        {
+          headers: { atoken },
+        }
       );
+
       if (data.success) {
         toast.success(data.message);
-        setDocImg(false);
-        setDocName("");
-        setDocEmail("");
-        setDocPassword("");
-        setDocPhone(0);
-        setDocExperience("");
-        setDocFees("");
-        setDocSpeciality("");
-        setDegree("");
-        setAddress1("");
-        setAddress2("");
-        setDocAbout("");
       } else {
         toast.error(data.message);
       }
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
-  // const onSubmitHandler = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     if (!docImg) {
-  //       return toast.error("Please upload doctor image");
-  //     }
-  //     const formData = new FormData();
-  //     formData.append("image", docImg);
-  //     formData.append("name", docName);
-  //     formData.append("email", docEmail);
-  //     formData.append("password", docPassword);
-  //     // formData.append("phone", phone);
-  //     formData.append("experience", docExperience);
-  //     formData.append("fees", Number(docFees));
-  //     formData.append("speciality", docSpeciality);
-  //     formData.append("degree", degree);
-  //     formData.append(
-  //       "address",
-  //       JSON.stringify({ line1: address1, line2: address2 })
-  //     );
-  //     formData.append("about", docAbout);
-
-  //     formData.forEach((value, key) => {
-  //       console.log(`${key} ${value}`);
-  //     });
-
-  //     const { data } = await axios.post(
-  //       `${backendUrl}/api/admin/addDoctor`,
-  //       formData,
-  //       { headers: { atoken } }
-  //     );
-  //     if (data.success) {
-  //       toast.success(data.message);
-  //     } else {
-  //       toast.error(data.message);
-  //     }
-  //   } catch (error) {}
-  // };
-
   return (
-    <form onSubmit={onSubmitHandler} className="m-5 w-full " action="">
+    <form onSubmit={onSubmitHandler} className="m-5 w-full " method="post">
       <p className="m-3 text-lg font font-medium ">Add Doctor</p>
       <div className="bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll">
         <div className="flex items-center gap-4 mb-8 text-gray-500">
@@ -150,7 +97,7 @@ function AddDoctor() {
               <p>Doctor name</p>
               <input
                 onChange={(e) => setDocName(e.target.value)}
-                value={docName}
+                value={name}
                 className="border  w-full  rounded py-2 px-3"
                 type="text"
                 placeholder="Name"
@@ -162,7 +109,7 @@ function AddDoctor() {
               <p>Doctor Email</p>
               <input
                 onChange={(e) => setDocEmail(e.target.value)}
-                value={docEmail}
+                value={email}
                 className="border  w-full  rounded py-2 px-3"
                 type="email"
                 placeholder="Email"
@@ -174,21 +121,10 @@ function AddDoctor() {
               <p>Doctor Password</p>
               <input
                 onChange={(e) => setDocPassword(e.target.value)}
-                value={docPassword}
+                value={password}
                 className="border  w-full  rounded py-2 px-3"
                 type="password"
                 placeholder="Password"
-                required
-              />
-            </div>
-            <div className="flex-1 flex-col gap-1">
-              <p>Doctor Phone</p>
-              <input
-                onChange={(e) => setDocPhone(e.target.value)}
-                value={phone}
-                className="border  w-full  rounded py-2 px-3"
-                type="number"
-                placeholder="Phone"
                 required
               />
             </div>
@@ -197,7 +133,7 @@ function AddDoctor() {
               <p>Experience</p>
               <select
                 onChange={(e) => setDocExperience(e.target.value)}
-                value={docExperience}
+                value={experience}
                 className="border  w-full  rounded py-2 px-3"
                 name=""
                 id=""
@@ -219,7 +155,7 @@ function AddDoctor() {
               <p>Fees</p>
               <input
                 onChange={(e) => setDocFees(e.target.value)}
-                value={docFees}
+                value={fees}
                 className="border  w-full  rounded py-2 px-3"
                 type="number"
                 placeholder="Fees"
@@ -233,7 +169,7 @@ function AddDoctor() {
               <p>Speciality</p>
               <select
                 onChange={(e) => setDocSpeciality(e.target.value)}
-                value={docSpeciality}
+                value={speciality}
                 className="border  w-full  rounded py-2 px-3"
                 name=""
                 id=""
@@ -283,7 +219,7 @@ function AddDoctor() {
               <p className="mb-2 mt-4">About Doctor</p>
               <textarea
                 onChange={(e) => setDocAbout(e.target.value)}
-                value={docAbout}
+                value={about}
                 className="w-full px-4 pt-2 border rounded"
                 type="text"
                 placeholder="write about doctor"
@@ -291,14 +227,14 @@ function AddDoctor() {
                 rows={5}
               ></textarea>
             </div>
+            <button
+              type="submit"
+              className="bg-primary px-10 py-3 mt-4 text-white rounded-full"
+            >
+              Add Doctor
+            </button>
           </div>
         </div>
-        <button
-          type="submit"
-          className="bg-primary px-10 py-3 mt-4 text-white rounded-full"
-        >
-          Add Doctor
-        </button>
       </div>
     </form>
   );
