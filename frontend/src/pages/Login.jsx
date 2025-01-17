@@ -22,7 +22,7 @@ function Login() {
           email,
         });
         if (data.success) {
-          localStorage.setItem("item", data.token);
+          localStorage.setItem("token", data.token);
           setToken(data.token);
         } else {
           toast.error(data.message);
@@ -33,7 +33,7 @@ function Login() {
           email,
         });
         if (data.success) {
-          localStorage.setItem("item", data.token);
+          localStorage.setItem("token", data.token);
           setToken(data.token);
         } else {
           toast.error(data.message);
