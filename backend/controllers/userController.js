@@ -106,8 +106,14 @@ const updateProfile = async (req, res) => {
 
     if (imageFile) {
       //upload Image to cloudiary
+      const imageUpload = await cloudiary.uploader.upload(imageFile.path, {
+        resource_type: "image",
+      });
+      const imageURL = imageUpload.secure_url;
+      await userModel.findByIdAndUpdate(userId, { image: imageURL });
     }
+    res.json({ success: true, message: "Profile Updataed" });
   } catch (error) {}
 };
 
-export { registerUser, loginUser, getProfile };
+export { registerUser, loginUser, getProfile, updateProfile };
