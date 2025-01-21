@@ -2,7 +2,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-
+import razorpay from "razorpay";
 import { v2 as cloudiary } from "cloudinary";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
@@ -188,6 +188,46 @@ const listAppointment = async (req, res) => {
   }
 };
 
+//API to cancel appointment
+const cancelAppointment = async (req, res) => {
+  try {
+    const { userId, appointmentId } = req.body;
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    //verify appointment user
+
+    if (appointmentData.userId !== userId) {
+      return res.json({ success: false, message: "Unautharized action" });
+    }
+
+    await appointmentModel.findByIdAndUpdate(appointmentId, {
+      cancelled: true,
+    });
+    // Releasing doctor slot
+
+    const { docId, slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModel.findById(docId);
+    let slots_booked = doctorData.slots_booked;
+    slots_booked[slotDate] = slots_booked[slotDate].filter(
+      (e) => e !== slotTime
+    );
+
+    await doctorModel.findByIdAndUpdate(docId, { slots_booked });
+
+    res.json({ success: true, message: "Appointment cancelled" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+//API to make payment of appointment using razorpay
+
+const razorpayInstance = new razorpay({
+  key_id: "",
+  key_secret: "",
+});
+// const paymentRazorpay
+
 export {
   registerUser,
   loginUser,
@@ -195,4 +235,5 @@ export {
   updateProfile,
   bookAppointment,
   listAppointment,
+  cancelAppointment,
 };

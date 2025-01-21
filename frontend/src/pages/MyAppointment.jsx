@@ -6,7 +6,7 @@ import axios from "axios";
 import Contact from "./Contact";
 
 function MyAppointment() {
-  const { backendUrl, token } = useContext(AppContext);
+  const { backendUrl, token, getDoctorData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
 
   const getUserAppointments = async () => {
@@ -18,6 +18,27 @@ function MyAppointment() {
       if (data.success) {
         setAppointments(data.appointments.reverse());
         console.log(data.appointments);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const calcelAppointment = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/cancel-appointment`,
+        { appointmentId },
+        { headers: { token } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getUserAppointments();
+        getDoctorData();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
@@ -89,12 +110,24 @@ function MyAppointment() {
             </div>
             <div></div>
             <div className="flex flex-col gap-2 justify-end">
-              <button className="text-sm hover:bg-primary hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
-                Cancle Appointment
-              </button>
-              <button className="text-sm hover:bg-red-500 hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
-                Pay Online
-              </button>
+              {!item.cancelled && (
+                <button
+                  onClick={() => calcelAppointment(item._id)}
+                  className="text-sm hover:bg-red-500 hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded"
+                >
+                  Cancle Appointment
+                </button>
+              )}
+              {!item.cancelled && (
+                <button className="text-sm hover:bg-primary hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
+                  Pay Online
+                </button>
+              )}
+              {item.cancelled && (
+                <button className="sm:min-w-48 py-2 border-red-500 rounded text-red-500">
+                  Appointment cancelled
+                </button>
+              )}
             </div>
           </div>
         ))}
