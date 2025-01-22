@@ -10,6 +10,8 @@ const AdminContextProvider = (props) => {
   );
   const [doctors, setDoctors] = useState([]);
 
+  const [appointments, setAppointments] = useState([]);
+
   const getAllDoctors = async () => {
     try {
       const { data } = await axios.post(
@@ -47,6 +49,41 @@ const AdminContextProvider = (props) => {
     }
   };
 
+  const getAllAppointment = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/appointments`, {
+        headers: { atoken },
+      });
+
+      if (data.success) {
+        setAppointments(data.appointments);
+        console.log(data.appointments);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong7");
+    }
+  };
+
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/admin/cancel-appointment`,
+        { appointmentId },
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getAllAppointment();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong7");
+    }
+  };
+
   const value = {
     atoken,
     setAtoken,
@@ -54,6 +91,10 @@ const AdminContextProvider = (props) => {
     doctors,
     getAllDoctors,
     changeAvailability,
+    appointments,
+    setAppointments,
+    getAllAppointment,
+    cancelAppointment,
   };
 
   return (
