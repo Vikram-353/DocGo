@@ -9,7 +9,7 @@ function SideBar() {
   const { dtoken } = useContext(DoctorContext);
 
   return (
-    <div className="min-h-screen bg-white border-r">
+    <div className="min-h-screen bg-white border-r p-4">
       {atoken && (
         <ul className="text-[#515151] mt-5">
           <NavLink
@@ -21,7 +21,7 @@ function SideBar() {
             to={"/admin-dashboard"}
           >
             <img src={assets.home_icon} alt="" />
-            <p>Dashboard</p>
+            <p className="hidden md:block">Dashboard</p>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -32,7 +32,7 @@ function SideBar() {
             to={"/all-appointments"}
           >
             <img src={assets.appointment_icon} alt="" />
-            <p>Appointment</p>
+            <p className="hidden md:block">Appointment</p>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -43,7 +43,7 @@ function SideBar() {
             to={"/addDoctor"}
           >
             <img src={assets.add_icon} alt="" />
-            <p>Add Doctor</p>
+            <p className="hidden md:block">Add Doctor</p>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -54,7 +54,7 @@ function SideBar() {
             to={"/doctor-list"}
           >
             <img src={assets.people_icon} alt="" />
-            <p>Doctors list</p>
+            <p className="hidden md:block">Doctors list</p>
           </NavLink>
         </ul>
       )}
@@ -70,7 +70,7 @@ function SideBar() {
             to={"/doctor-dashboard"}
           >
             <img src={assets.home_icon} alt="" />
-            <p>Dashboard</p>
+            <p className="hidden md:block">Dashboard</p>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -81,7 +81,7 @@ function SideBar() {
             to={"/doctor-appointments"}
           >
             <img src={assets.appointment_icon} alt="" />
-            <p>Appointment</p>
+            <p className="hidden md:block">Appointment</p>
           </NavLink>
 
           <NavLink
@@ -93,7 +93,7 @@ function SideBar() {
             to={"/doctor-profile"}
           >
             <img src={assets.people_icon} alt="" />
-            <p>Profile</p>
+            <p className="hidden md:block">Profile</p>
           </NavLink>
         </ul>
       )}
