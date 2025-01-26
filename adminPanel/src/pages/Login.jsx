@@ -3,11 +3,13 @@ import { assets } from "../assets/assets_admin/assets";
 import { AdminContext } from "../context/AdminContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { DoctorContext } from "../context/doctorContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setAtoken, backendUrl } = useContext(AdminContext);
+  const { setDToken } = useContext(DoctorContext);
   const [state, setState] = useState("Admin");
 
   const onSubmitHandler = async (e) => {
@@ -30,7 +32,11 @@ function Login() {
           password,
         });
         if (data.success) {
+          localStorage.setItem("dtoken", data.token);
+          setDToken(data.token);
           console.log(data.token);
+        } else {
+          toast.error(data.message);
         }
       }
     } catch (error) {
