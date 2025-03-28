@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 const authDoctor = async (req, res, next) => {
   try {
