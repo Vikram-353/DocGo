@@ -66,7 +66,6 @@ function Login() {
             Please {state === "Sign Up" ? "sign up" : "log in"} to book
             appointment
           </p>
-
           {state === "Sign Up" && (
             <div className="w-full">
               <p>Full Name</p>
