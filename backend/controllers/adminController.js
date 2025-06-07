@@ -86,7 +86,7 @@ const addDoctor = async (req, res) => {
     res.status(200).json({ success: true, message: "Doctor Added" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -176,6 +176,19 @@ const adminDashboard = async (req, res) => {
   } catch (error) {}
 };
 
+const doctorProfileById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+
+    const profileData = await doctorModel.findById(docId).select("-password");
+
+    res.json({ success: true, profileData });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export {
   addDoctor,
   loginAdmin,
@@ -183,4 +196,5 @@ export {
   appointmentsAdmin,
   appointmentCancel,
   adminDashboard,
+  doctorProfileById,
 };

@@ -20,7 +20,11 @@ function SideBar() {
             }
             to={"/admin-dashboard"}
           >
-            <img src={assets.home_icon} alt="" />
+            <img
+              src={assets.home_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Dashboard</p>
           </NavLink>
           <NavLink
@@ -31,7 +35,11 @@ function SideBar() {
             }
             to={"/all-appointments"}
           >
-            <img src={assets.appointment_icon} alt="" />
+            <img
+              src={assets.appointment_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Appointment</p>
           </NavLink>
           <NavLink
@@ -42,7 +50,11 @@ function SideBar() {
             }
             to={"/addDoctor"}
           >
-            <img src={assets.add_icon} alt="" />
+            <img
+              src={assets.add_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Add Doctor</p>
           </NavLink>
           <NavLink
@@ -53,7 +65,11 @@ function SideBar() {
             }
             to={"/doctor-list"}
           >
-            <img src={assets.people_icon} alt="" />
+            <img
+              src={assets.people_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Doctors list</p>
           </NavLink>
         </ul>
@@ -69,7 +85,11 @@ function SideBar() {
             }
             to={"/doctor-dashboard"}
           >
-            <img src={assets.home_icon} alt="" />
+            <img
+              src={assets.home_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Dashboard</p>
           </NavLink>
           <NavLink
@@ -80,7 +100,11 @@ function SideBar() {
             }
             to={"/doctor-appointments"}
           >
-            <img src={assets.appointment_icon} alt="" />
+            <img
+              src={assets.appointment_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Appointment</p>
           </NavLink>
 
@@ -92,7 +116,11 @@ function SideBar() {
             }
             to={"/doctor-profile"}
           >
-            <img src={assets.people_icon} alt="" />
+            <img
+              src={assets.people_icon}
+              alt=""
+              className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem]"
+            />
             <p className="hidden md:block">Profile</p>
           </NavLink>
         </ul>

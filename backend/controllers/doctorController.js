@@ -142,6 +142,7 @@ const doctorDashboard = async (req, res) => {
 const doctorProfile = async (req, res) => {
   try {
     const { docId } = req.body;
+
     const profileData = await doctorModel.findById(docId).select("-password");
     res.json({ success: true, profileData });
   } catch (error) {

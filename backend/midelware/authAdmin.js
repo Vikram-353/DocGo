@@ -11,6 +11,7 @@ const authAdmin = async (req, res, next) => {
     if (token_decode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
       return res.status(400).json({ error: "Invalid Authentication" });
     }
+
     // console.log(atoken);
 
     next();

@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 export const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
@@ -9,8 +10,9 @@ const AdminContextProvider = (props) => {
     localStorage.getItem("atoken") ? localStorage.getItem("atoken") : ""
   );
   const [doctors, setDoctors] = useState([]);
-
+  const { id } = useParams();
   const [appointments, setAppointments] = useState([]);
+  const [profileData, setProfileData] = useState(false);
 
   const [dashData, setDashData] = useState(false);
 
@@ -48,6 +50,25 @@ const AdminContextProvider = (props) => {
       }
     } catch (error) {
       toast.error("Something went wrong");
+    }
+  };
+
+  const getProfileData = async (docId) => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/api/admin/doctor-detail/${docId}`,
+        {
+          headers: { atoken },
+        }
+      );
+      if (data.success) {
+        setProfileData(data.profileData);
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
     }
   };
 
@@ -116,6 +137,9 @@ const AdminContextProvider = (props) => {
     cancelAppointment,
     dashData,
     getDashData,
+    profileData,
+    getProfileData,
+    setProfileData,
   };
 
   return (
