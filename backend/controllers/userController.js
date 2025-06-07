@@ -227,7 +227,7 @@ const cancelAppointment = async (req, res) => {
 
 //API to make payment of appointment using razorpay
 
-const paymentRazorpay = async();
+// const paymentRazorpay = async();
 
 export {
   registerUser,
