@@ -6,6 +6,7 @@ import connectCloudinary from "./config/cloudinary.js";
 import adminRouter from "./routes/adminRoute.js";
 import doctorRouter from "./routes/doctorRoute.js";
 import userRouter from "./routes/userRout.js";
+import webhookRouter from "./routes/webhookRoute.js";
 // appconfig
 
 const app = express();
@@ -23,6 +24,9 @@ app.use(cors());
 app.use("/api/admin", adminRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/user", userRouter);
+
+// webhooks (raw body handled in route)
+app.use("/api/webhook", webhookRouter);
 
 app.get("/", (req, res) => {
   res.send("API WORKING GREAT");

@@ -168,6 +168,34 @@ const bookAppointment = async (req, res) => {
 
     await doctorModel.findByIdAndUpdate(docId, { slots_booked });
 
+    // If client requested auto payment, create an order and attach it to appointment
+    if (req.body.autoPay) {
+      const options = {
+        amount: Math.round(newAppointment.amount * 100), // amount in paise
+        currency: "INR",
+        receipt: "receipt_" + newAppointment._id,
+      };
+      const order = await razorpayInstance.orders.create(options);
+
+      // persist order id to appointment for reconciliation via webhook
+      await appointmentModel.findByIdAndUpdate(newAppointment._id, {
+        paymentDetails: {
+          orderId: order.id,
+          amount: order.amount,
+          currency: order.currency,
+        },
+      });
+
+      return res.json({
+        success: true,
+        message: "Appointment Booked",
+        appointmentId: newAppointment._id,
+        amount: newAppointment.amount,
+        order,
+        key: process.env.RAZORPAY_KEY_ID,
+      });
+    }
+
     res.json({
       success: true,
       message: "Appointment Booked",
@@ -250,6 +278,15 @@ const createOrder = async (req, res) => {
     };
 
     const order = await razorpayInstance.orders.create(options);
+
+    // persist order id to appointment for webhook reconciliation
+    await appointmentModel.findByIdAndUpdate(appointmentId, {
+      paymentDetails: {
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+      },
+    });
 
     res.json({ success: true, order, key: process.env.RAZORPAY_KEY_ID });
   } catch (error) {

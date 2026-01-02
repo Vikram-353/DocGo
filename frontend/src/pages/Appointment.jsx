@@ -67,6 +67,64 @@ function Appointment() {
     setDocSlot(slots); // Update state once after the loop
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const existing = document.querySelector("script[src='https://checkout.razorpay.com/v1/checkout.js']");
+      if (existing) return resolve(true);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const openCheckout = async (order, key, appointmentId) => {
+    const ok = await loadRazorpayScript();
+    if (!ok) {
+      toast.error("Failed to load payment SDK");
+      return;
+    }
+
+    const options = {
+      key: key,
+      amount: order.amount,
+      currency: order.currency,
+      name: "DocGo",
+      description: "Appointment Payment",
+      order_id: order.id,
+      handler: async function (response) {
+        try {
+          const verifyRes = await axios.post(
+            `${backendUrl}/api/user/verify-payment`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              appointmentId,
+            },
+            { headers: { token } }
+          );
+          if (verifyRes.data.success) {
+            toast.success("Payment successful");
+            getDoctorData();
+            navigate("/my-appointments");
+          } else {
+            toast.error(verifyRes.data.message || "Payment verification failed");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Payment verification failed");
+        }
+      },
+      prefill: {},
+      theme: { color: "#3b82f6" },
+    };
+
+    const paymentObj = new window.Razorpay(options);
+    paymentObj.open();
+  };
+
   const bookApppointment = async () => {
     if (!token) {
       toast.warn("Login to book appointment");
@@ -81,16 +139,22 @@ function Appointment() {
 
       const slotDate = day + "_" + month + "_" + year;
 
+      // Request booking and ask backend to create order immediately (autoPay)
       const { data } = await axios.post(
         `${backendUrl}/api/user/book-appointment`,
-        { docId, slotDate, slotTime },
+        { docId, slotDate, slotTime, autoPay: true },
         { headers: { token } }
       );
 
       if (data.success) {
-        toast.success(data.message);
-        getDoctorData();
-        navigate("/my-appointments");
+        // If backend returned an order (autoPay), open checkout immediately
+        if (data.order && data.key && data.appointmentId) {
+          await openCheckout(data.order, data.key, data.appointmentId);
+        } else {
+          toast.success(data.message);
+          getDoctorData();
+          navigate("/my-appointments");
+        }
       } else {
         toast.error(data.message);
       }
