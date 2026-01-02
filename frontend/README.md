@@ -72,17 +72,6 @@ Frontend (`frontend/.env`) — add:
 ```
 VITE_BACKEND_URL="http://localhost:5000" # or your backend URL
 ```
-
-
-
-## 🔧 Notes & Next steps
-
-- Add webhooks on the backend for asynchronous verification and reconciliation (see `backend/README_PAYMENT.md` for details). This ensures payments are reconciled even when events arrive after a checkout completes.
-- Auto-trigger payment: the booking endpoint supports an `autoPay=true` flag. If you pass this flag, the backend will create a Razorpay order and return it in the booking response so the frontend can open the checkout immediately after booking.
-- Optional improvements: add webhook logging, retry/reconciliation logic, and unit tests for payment endpoints.
-
----
-
 ## 📚 Useful files
 
 - `backend/models/appointmentModel.js` — stores appointment data and payment details

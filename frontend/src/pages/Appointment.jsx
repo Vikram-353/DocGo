@@ -69,7 +69,9 @@ function Appointment() {
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      const existing = document.querySelector("script[src='https://checkout.razorpay.com/v1/checkout.js']");
+      const existing = document.querySelector(
+        "script[src='https://checkout.razorpay.com/v1/checkout.js']"
+      );
       if (existing) return resolve(true);
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -110,7 +112,9 @@ function Appointment() {
             getDoctorData();
             navigate("/my-appointments");
           } else {
-            toast.error(verifyRes.data.message || "Payment verification failed");
+            toast.error(
+              verifyRes.data.message || "Payment verification failed"
+            );
           }
         } catch (err) {
           console.error(err);
