@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import razorpay from "razorpay";
+import crypto from "crypto";
 import { v2 as cloudiary } from "cloudinary";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
@@ -167,7 +168,12 @@ const bookAppointment = async (req, res) => {
 
     await doctorModel.findByIdAndUpdate(docId, { slots_booked });
 
-    res.json({ success: true, message: "Appointment Booked" });
+    res.json({
+      success: true,
+      message: "Appointment Booked",
+      appointmentId: newAppointment._id,
+      amount: newAppointment.amount,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: error.message });
@@ -220,14 +226,78 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
-// const razorpayInstance = new razorpay({
-//   key_id: "",
-//   key_secret: "",
-// });
+const razorpayInstance = new razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
-//API to make payment of appointment using razorpay
+//API to create order for appointment using Razorpay
+const createOrder = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const appointment = await appointmentModel.findById(appointmentId);
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+    if (appointment.payment) {
+      return res.json({ success: false, message: "Appointment already paid" });
+    }
 
-// const paymentRazorpay = async();
+    const options = {
+      amount: Math.round(appointment.amount * 100), // amount in paise
+      currency: "INR",
+      receipt: "receipt_" + appointmentId,
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+
+    res.json({ success: true, order, key: process.env.RAZORPAY_KEY_ID });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+//API to verify payment and mark appointment paid
+const verifyPayment = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      appointmentId,
+    } = req.body;
+
+    const generated_signature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generated_signature === razorpay_signature) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, {
+        payment: true,
+        paymentDetails: {
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          signature: razorpay_signature,
+          paidAt: Date.now(),
+        },
+      });
+
+      return res.json({
+        success: true,
+        message: "Payment verified and appointment marked paid",
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid signature" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 export {
   registerUser,
@@ -237,4 +307,6 @@ export {
   bookAppointment,
   listAppointment,
   cancelAppointment,
+  createOrder,
+  verifyPayment,
 };

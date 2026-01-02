@@ -46,6 +46,86 @@ function MyAppointment() {
     }
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const existing = document.querySelector(
+        "script[src='https://checkout.razorpay.com/v1/checkout.js']"
+      );
+      if (existing) return resolve(true);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const payOnline = async (appointmentId, amount) => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/create-order`,
+        { appointmentId },
+        { headers: { token } }
+      );
+
+      if (!data.success) {
+        toast.error(data.message);
+        return;
+      }
+
+      const { order, key } = data;
+
+      const ok = await loadRazorpayScript();
+      if (!ok) {
+        toast.error("Razorpay SDK failed to load. Check your connection.");
+        return;
+      }
+
+      const options = {
+        key: key,
+        amount: order.amount,
+        currency: order.currency,
+        name: "DocGo",
+        description: "Appointment Payment",
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post(
+              `${backendUrl}/api/user/verify-payment`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                appointmentId,
+              },
+              { headers: { token } }
+            );
+            if (verifyRes.data.success) {
+              toast.success("Payment successful");
+              getUserAppointments();
+              getDoctorData();
+            } else {
+              toast.error(
+                verifyRes.data.message || "Payment verification failed"
+              );
+            }
+          } catch (err) {
+            console.error(err);
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {},
+        theme: { color: "#3b82f6" },
+      };
+
+      const paymentObj = new window.Razorpay(options);
+      paymentObj.open();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Something went wrong");
+    }
+  };
+
   const months = [
     "",
     "Jan",
@@ -118,9 +198,19 @@ function MyAppointment() {
                   Cancle Appointment
                 </button>
               )}
-              {!item.cancelled && !item.isCompleted && (
-                <button className="text-sm hover:bg-primary hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded">
+
+              {!item.cancelled && !item.isCompleted && !item.payment && (
+                <button
+                  onClick={() => payOnline(item._id, item.amount)}
+                  className="text-sm hover:bg-primary hover:text-white transition-all duration-300 text-stone-500 text-center sm:min-w-48 py-2 border rounded"
+                >
                   Pay Online
+                </button>
+              )}
+
+              {item.payment && (
+                <button className="sm:min-w-48 py-2 border border-green-200 text-green-500">
+                  Paid
                 </button>
               )}
               {item.cancelled && !item.isCompleted && (
